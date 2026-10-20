@@ -1,0 +1,156 @@
+-- 1. Profils des utilisateurs
+
+create table public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  full_name text not null,
+  phone text not null,
+  role text not null default 'member'
+    check (role in ('member', 'admin')),
+  created_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+create policy "Members can read profiles"
+on public.profiles
+for select
+to authenticated
+using (true);
+
+create policy "Members can create their own profile"
+on public.profiles
+for insert
+to authenticated
+with check (
+  id = (select auth.uid())
+  and role = 'member'
+);
+
+-- Les utilisateurs ne peuvent pas modifier leur rôle.
+-- Aucun droit UPDATE n'est accordé ici.
+
+
+-- 2. Création automatique du profil à l'inscription
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (
+    id,
+    full_name,
+    phone
+  )
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data ->> 'full_name', ''),
+    coalesce(new.raw_user_meta_data ->> 'phone', '')
+  );
+
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+after insert on auth.users
+for each row
+execute procedure public.handle_new_user();
+
+
+-- 3. Table des photos
+
+create table public.photos (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text not null default '',
+  storage_path text not null unique,
+  created_at timestamptz not null default now()
+);
+
+alter table public.photos enable row level security;
+
+create policy "Authenticated members can view photos"
+on public.photos
+for select
+to authenticated
+using (true);
+
+create policy "Only admins can publish photos"
+on public.photos
+for insert
+to authenticated
+with check (
+  exists (
+    select 1
+    from public.profiles
+    where profiles.id = (select auth.uid())
+      and profiles.role = 'admin'
+  )
+);
+
+create policy "Only admins can delete photos"
+on public.photos
+for delete
+to authenticated
+using (
+  exists (
+    select 1
+    from public.profiles
+    where profiles.id = (select auth.uid())
+      and profiles.role = 'admin'
+  )
+);
+
+
+-- 4. Table des mentions J'aime
+
+create table public.likes (
+  photo_id uuid not null
+    references public.photos(id) on delete cascade,
+  user_id uuid not null
+    references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (photo_id, user_id)
+);
+
+alter table public.likes enable row level security;
+
+create policy "Authenticated members can view likes"
+on public.likes
+for select
+to authenticated
+using (true);
+
+create policy "Members can like photos as themselves"
+on public.likes
+for insert
+to authenticated
+with check (
+  user_id = (select auth.uid())
+);
+
+create policy "Members can remove their own likes"
+on public.likes
+for delete
+to authenticated
+using (
+  user_id = (select auth.uid())
+);
+
+
+-- 5. Autoriser les opérations nécessaires aux utilisateurs connectés
+
+grant select, insert
+on public.profiles
+to authenticated;
+
+grant select, insert, delete
+on public.photos
+to authenticated;
+
+grant select, insert, delete
+on public.likes
+to authenticated;
