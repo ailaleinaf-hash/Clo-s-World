@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Cloé’s World — Galerie de photos</title>
+
+  <meta name="description"
+        content="Bienvenue sur Cloé’s World, découvre ma galerie de photos.">
+
+  <meta name="theme-color" content="#10091d">
+
+  <style>
+    :root {
+      --bg: #10091d;
+      --panel: #1b102b;
+      --violet: #a855f7;
+      --light: #e9d5ff;
+      --text: #ffffff;
+      --muted: #b7a7c9;
+      --border: #38234f;
+      --danger: #ff647c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--light);
+      outline-offset: 3px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(16, 9, 29, .96);
+      border-bottom: 1px solid var(--border);
+      padding: 15px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--light);
+    }
+
+    .logo span {
+      color: var(--violet);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 55px 10px 35px;
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 6vw, 52px);
+      margin: 0 0 15px;
+    }
+
+    .hero h1 span {
+      color: var(--violet);
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 17px;
+      font-weight: bold;
+      color: white;
+      background: var(--violet);
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .button:hover {
+      filter: brightness(1.12);
+    }
+
+    .button.secondary {
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
+
+    .button.danger {
+      background: #612038;
+    }
+
+    .button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .auth {
+      max-width: 420px;
+      margin: 15px auto 50px;
+      background: var(--panel);
+      padding: 25px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .auth h2 {
+      margin-top: 0;
+    }
+
+    .auth p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin: 15px 0 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      background: #10091d;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: white;
+    }
+
+    .auth .button {
+      width: 100%;
+      margin-top: 17px;
+    }
+
+    .switch {
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .link-button {
+      background: none;
+      border: 0;
+      color: var(--light);
+      text-decoration: underline;
+    }
+
+    .status {
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      background: #28183b;
+      color: var(--light);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin: 30px 0 20px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      padding-bottom: 45px;
+    }
+
+    .photo-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .photo-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      background: #21152e;
+    }
+
+    .photo-info {
+      padding: 14px;
+    }
+
+    .photo-info h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .photo-info p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .photo-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .like-button {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #10091d;
+      color: white;
+      padding: 9px 12px;
+    }
+
+    .like-button.liked {
+      color: #ff7ba5;
+      border-color: #ff7ba5;
+    }
+
+    .admin {
+      margin: 25px auto 40px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--panel);
+    }
+
+    .admin h2 {
+      margin-top: 0;
+    }
+
+    .admin .button {
+      margin-top: 15px;
+    }
+
+    .admin-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 35px 10px;
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 25px 10px 95px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .zangi-float {
+      position: fixed;
+      bottom: 20px;
+      right: 18px;
+      z-index: 20;
+      border-radius: 30px;
+      box-shadow: 0 5px 25px #0007;
+    }
+
+    @media (max-width: 760px) {
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .photo-info {
+        padding: 10px;
+      }
+
+      .photo-info h3 {
+        font-size: 14px;
+      }
+
+      header {
+        padding: 13px 4%;
+      }
+
+      .logo {
+        font-size: 17px;
+      }
+
+      .header-actions .button {
+        padding: 10px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Cloé’s <span>World</span> 💜</div>
+
+  <div class="header-actions">
+    <button id="logoutBtn" class="button secondary hidden">
+      Déconnexion
+    </button>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <h1>Welcome to <span>Cloé’s World</span> ✨</h1>
+    <p>
+      Un petit univers de photos, de souvenirs et de belles découvertes.
+      <br>
+      Explore la galerie et partage ton appréciation avec un ❤️.
+    </p>
+
+    <a
+      class="button"
+      href="https://services.zangi.com/dl/conversation/4609733952"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      💬 M'écrire sur Zangi
+    </a>
+  </section>
+
+  <div id="globalStatus" class="status hidden" role="status"></div>
+
+  <!-- INSCRIPTION ET CONNEXION -->
+
+  <section id="authSection" class="auth">
+    <h2 id="authTitle">Bienvenue 💜</h2>
+
+    <p id="authDescription">
+      Connecte-toi pour découvrir la galerie de Cloé’s World.
+    </p>
+
+    <form id="authForm">
+
+      <div id="registerFields" class="hidden">
+
+        <label for="fullName">Nom complet</label>
+        <input
+          id="fullName"
+          type="text"
+          maxlength="100"
+          autocomplete="name"
+          required
+        >
+
+        <label for="phone">Numéro de téléphone</label>
+        <input
+          id="phone"
+          type="tel"
+          maxlength="25"
+          autocomplete="tel"
+          placeholder="+229..."
+          required
+        >
+
+      </div>
+
+      <label for="email">Adresse e-mail</label>
+      <input
+        id="email"
+        type="email"
+        maxlength="254"
+        autocomplete="email"
+        required
+      >
+
+      <label for="password">Mot de passe</label>
+      <input
+        id="password"
+        type="password"
+        minlength="8"
+        maxlength="72"
+        autocomplete="current-password"
+        required
+      >
+
+      <button id="authSubmit" class="button" type="submit">
+        Se connecter
+      </button>
+
+    </form>
+
+    <p class="switch">
+      <span id="switchText">Pas encore de compte ?</span>
+      <button id="switchMode" class="link-button" type="button">
+        S'inscrire
+      </button>
+    </p>
+
+    <p class="admin-note">
+      En créant un compte, tu acceptes que les informations nécessaires
+      à la gestion du compte soient traitées par le site.
+    </p>
+  </section>
+
+  <!-- ESPACE MEMBRE -->
+
+  <section id="memberSection" class="hidden">
+
+    <div class="section-heading">
+      <div>
+        <h2>Ma galerie 📸</h2>
+        <p style="color:var(--muted)">
+          Découvre les photos et laisse un cœur.
+        </p>
+      </div>
+    </div>
+
+    <div id="gallery" class="gallery">
+      <p class="empty">Chargement de la galerie...</p>
+    </div>
+
+  </section>
+
+  <!-- ESPACE ADMINISTRATEUR -->
+
+  <section id="adminSection" class="admin hidden">
+
+    <h2>👑 Administration</h2>
+
+    <p style="color:var(--muted)">
+      Publie tes photos sur Cloé’s World.
+    </p>
+
+    <form id="uploadForm">
+
+      <label for="photoTitle">Titre de la photo</label>
+      <input
+        id="photoTitle"
+        type="text"
+        maxlength="150"
+        required
+      >
+
+      <label for="photoDescription">Description</label>
+      <input
+        id="photoDescription"
+        type="text"
+        maxlength="500"
+      >
+
+      <label for="photoFile">Choisir une photo</label>
+      <input
+        id="photoFile"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        required
+      >
+
+      <button id="uploadBtn" class="button" type="submit">
+        📤 Publier la photo
+      </button>
+
+    </form>
+
+    <p class="admin-note">
+      Les photos sont stockées dans Supabase Storage.
+      Les fichiers trop volumineux ou les formats non autorisés
+      doivent être refusés par les règles de stockage.
+    </p>
+
+    <div id="adminStatus" class="status hidden" role="status"></div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>© <span id="year"></span> Cloé’s World 💜</p>
+  <p>Photos • Souvenirs • Good vibes</p>
+</footer>
+
+<a
+  class="button zangi-float"
+  href="https://services.zangi.com/dl/conversation/4609733952"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  💬 Zangi
+</a>
+
+<!-- Bibliothèque officielle Supabase -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(() => {
+  "use strict";
+
+  /*
+    ÉTAPE IMPORTANTE :
+    Remplace ces deux valeurs par celles de TON projet Supabase.
+    N'utilise jamais une clé secrète ou une clé service_role ici.
+  */
+
+  const SUPABASE_URL = "COLLE_ICI_URL_SUPABASE";
+  const SUPABASE_ANON_KEY = "COLLE_ICI_CLE_PUBLIQUE_SUPABASE";
+
+  const CONFIGURED =
+    SUPABASE_URL.startsWith("https://") &&
+    !SUPABASE_URL.includes("COLLE_ICI") &&
+    SUPABASE_ANON_KEY.length > 20 &&
+    !SUPABASE_ANON_KEY.includes("COLLE_ICI");
+
+  const $ = id => document.getElementById(id);
+
+  $("year").textContent = new Date().getFullYear();
+
+  let supabase = null;
+  let registerMode = false;
+  let currentUser = null;
+  let currentProfile = null;
+  let busy = false;
+
+  function status(message, admin = false) {
+    const el = $(admin ? "adminStatus" : "globalStatus");
+    el.textContent = message;
+    el.classList.remove("hidden");
+  }
+
+  function clearStatus() {
+    $("globalStatus").classList.add("hidden");
+    $("adminStatus").classList.add("hidden");
+  }
+
+  function setBusy(value) {
+    busy = value;
+    $("authSubmit").disabled = value;
+    $("uploadBtn").disabled = value;
+  }
+
+  function setMode(register) {
+    registerMode = register;
+
+    $("registerFields").classList.toggle("hidden", !register);
+    $("fullName").required = register;
+    $("phone").required = register;
+
+    $("authTitle").textContent = register
+      ? "Créer un compte 💜"
+      : "Bienvenue 💜";
+
+    $("authDescription").textContent = register
+      ? "Inscris-toi pour découvrir la galerie."
+      : "Connecte-toi pour découvrir la galerie.";
+
+    $("authSubmit").textContent = register
+      ? "Créer mon compte"
+      : "Se connecter";
+
+    $("switchText").textContent = register
+      ? "Déjà un compte ?"
+      : "Pas encore de compte ?";
+
+    $("switchMode").textContent = register
+      ? "Se connecter"
+      : "S'inscrire";
+
+    $("password").autocomplete = register
+      ? "new-password"
+      : "current-password";
+  }
+
+  $("switchMode").addEventListener("click", () => {
+    setMode(!registerMode);
+    clearStatus();
+  });
+
+  function showLoggedOut() {
+    currentUser = null;
+    currentProfile = null;
+
+    $("authSection").classList.remove("hidden");
+    $("memberSection").classList.add("hidden");
+    $("adminSection").classList.add("hidden");
+    $("logoutBtn").classList.add("hidden");
+  }
+
+  async function getProfile(user) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, phone, role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+      throw new Error(
+        "Profil introuvable. Vérifie la configuration SQL de Supabase."
+      );
+    }
+
+    return data;
+  }
+
+  async function showLoggedIn(user) {
+    currentUser = user;
+
+    try {
+      currentProfile = await getProfile(user);
+
+      $("authSection").classList.add("hidden");
+      $("memberSection").classList.remove("hidden");
+      $("logoutBtn").classList.remove("hidden");
+
+      $("adminSection").classList.toggle(
+        "hidden",
+        currentProfile.role !== "admin"
+      );
+
+      await loadGallery();
+
+    } catch (error) {
+      console.error(error);
+
+      status(
+        "Impossible de charger ton profil. Vérifie la configuration de Supabase."
+      );
+    }
+  }
+
+  async function refreshSession() {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      status("Erreur de connexion à Supabase.");
+      return;
+    }
+
+    if (data.session) {
+      await showLoggedIn(data.session.user);
+    } else {
+      showLoggedOut();
+    }
+  }
+
+  $("authForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (busy) return;
+
+    clearStatus();
+
+    const email = $("email").value.trim();
+    const password = $("password").value;
+    const fullName = $("fullName").value.trim();
+    const phone = $("phone").value.trim();
+
+    if (!CONFIGURED) {
+      status("Configure d'abord l'URL et la clé publique Supabase dans le code.");
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      if (registerMode) {
+        if (!fullName || !phone) {
+          throw new Error("Renseigne ton nom et ton numéro de téléphone.");
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+              phone: phone
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          await showLoggedIn(data.user);
+          status("Compte créé avec succès !");
+        } else {
+          status(
+            "Inscription enregistrée. Consulte tes e-mails pour confirmer ton compte, puis connecte-toi."
+          );
+          setMode(false);
+        }
+
+      } else {
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if (error) throw error;
+
+        await showLoggedIn(data.user);
+        status("Connexion réussie !");
+      }
+
+    } catch (error) {
+      status(error.message || "Une erreur est survenue.");
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  $("logoutBtn").addEventListener("click", async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      status("Impossible de se déconnecter.");
+      return;
+    }
+
+    showLoggedOut();
+    setMode(false);
+    status("Tu es déconnecté.");
+  });
+
+  async function loadGallery() {
+    const gallery = $("gallery");
+
+    gallery.replaceChildren();
+
+    const loading = document.createElement("p");
+    loading.className = "empty";
+    loading.textContent = "Chargement des photos...";
+    gallery.append(loading);
+
+    try {
+      const { data: photos, error } = await supabase
+        .from("photos")
+        .select("id, title, description, storage_path, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      gallery.replaceChildren();
+
+      if (!photos || photos.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "Les premières photos arrivent bientôt 💜";
+        gallery.append(empty);
+        return;
+      }
+
+      for (const photo of photos) {
+        const card = document.createElement("article");
+        card.className = "photo-card";
+
+        const img = document.createElement("img");
+        img.alt = photo.title;
+        img.loading = "lazy";
+
+        /*
+          Les images sont stockées dans un bucket privé.
+          Une URL temporaire est générée pour l'utilisateur connecté.
+        */
+
+        const { data: signed, error: signedError } =
+          await supabase.storage
+            .from("photos")
+            .createSignedUrl(photo.storage_path, 300);
+
+        if (signedError) {
+          img.alt = "Photo indisponible";
+        } else {
+          img.src = signed.signedUrl;
+        }
+
+        const info = document.createElement("div");
+        info.className = "photo-info";
+
+        const title = document.createElement("h3");
+        title.textContent = photo.title;
+
+        const description = document.createElement("p");
+        description.textContent = photo.description || "";
+
+        const actions = document.createElement("div");
+        actions.className = "photo-actions";
+
+        const likeButton = document.createElement("button");
+        likeButton.className = "like-button";
+        likeButton.type = "button";
+        likeButton.textContent = "❤️ J'aime";
+
+        const count = document.createElement("span");
+        count.style.color = "var(--muted)";
+        count.style.fontSize = "13px";
+        count.textContent = "Chargement...";
+
+        actions.append(likeButton, count);
+        info.append(title, description, actions);
+
+        if (currentProfile.role === "admin") {
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "button danger";
+          deleteButton.textContent = "Supprimer";
+          deleteButton.style.marginTop = "12px";
+
+          deleteButton.addEventListener("click", async () => {
+            if (!confirm("Supprimer définitivement cette photo ?")) return;
+
+            deleteButton.disabled = true;
+
+            try {
+              const { error: deleteError } = await supabase
+                .from("photos")
+                .delete()
+                .eq("id", photo.id);
+
+              if (deleteError) throw deleteError;
+
+              const { error: storageError } = await supabase
+                .storage
+                .from("photos")
+                .remove([photo.storage_path]);
+
+              if (storageError) {
+                console.error(storageError);
+              }
+
+              await loadGallery();
+
+            } catch (error) {
+              alert(error.message || "Suppression impossible.");
+              deleteButton.disabled = false;
+            }
+          });
+
+          info.append(deleteButton);
+        }
+
+        card.append(img, info);
+        gallery.append(card);
+
+        try {
+          const { count: total, error: countError } = await supabase
+            .from("likes")
+            .select("photo_id", {
+              count: "exact",
+              head: true
+            })
+            .eq("photo_id", photo.id);
+
+          if (countError) throw countError;
+
+          const { data: mine, error: mineError } = await supabase
+            .from("likes")
+            .select("photo_id")
+            .eq("photo_id", photo.id)
+            .eq("user_id", currentUser.id)
+            .maybeSingle();
+
+          if (mineError) throw mineError;
+
+          let liked = !!mine;
+
+          function updateLike() {
+            likeButton.classList.toggle("liked", liked);
+            likeButton.setAttribute(
+              "aria-pressed",
+              String(liked)
+            );
+          }
+
+          count.textContent = `${total || 0} J'aime`;
+          updateLike();
+
+          likeButton.addEventListener("click", async () => {
+            if (likeButton.disabled) return;
+
+            likeButton.disabled = true;
+
+            try {
+              if (liked) {
+                const { error } = await supabase
+                  .from("likes")
+                  .delete()
+                  .eq("photo_id", photo.id)
+                  .eq("user_id", currentUser.id);
+
+                if (error) throw error;
+
+                liked = false;
+                count.textContent =
+                  `${Math.max(0, Number(total || 0) - 1)} J'aime`;
+
+              } else {
+                const { error } = await supabase
+                  .from("likes")
+                  .insert({
+                    photo_id: photo.id,
+                    user_id: currentUser.id
+                  });
+
+                if (error) throw error;
+
+                liked = true;
+                count.textContent =
+                  `${Number(total || 0) + 1} J'aime`;
+              }
+
+              updateLike();
+
+              /*
+                Recharge les compteurs depuis la base pour éviter
+                de conserver un total périmé.
+              */
+              await loadGallery();
+
+            } catch (error) {
+              alert(error.message || "Impossible d'enregistrer le J'aime.");
+            } finally {
+              likeButton.disabled = false;
+            }
+          });
+
+        } catch (error) {
+          console.error("Erreur de chargement des likes :", error);
+          count.textContent = "J'aime indisponibles";
+          likeButton.disabled = true;
+        }
+      }
+
+    } catch (error) {
+      console.error(error);
+      gallery.replaceChildren();
+
+      const message = document.createElement("p");
+      message.className = "empty";
+      message.textContent =
+        "Impossible de charger les photos. Vérifie la configuration Supabase.";
+
+      gallery.append(message);
+    }
+  }
+
+  $("uploadForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (busy || !currentUser || currentProfile.role !== "admin") {
+      status("Action réservée à l'administrateur.", true);
+      return;
+    }
+
+    const file = $("photoFile").files[0];
+    const title = $("photoTitle").value.trim();
+    const description = $("photoDescription").value.trim();
+
+    if (!file || !title) {
+      status("Choisis une photo et indique son titre.", true);
+      return;
+    }
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      status("Format refusé. Utilise JPG, PNG, WebP ou GIF.", true);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      status("La photo doit peser au maximum 5 Mo.", true);
+      return;
+    }
+
+    setBusy(true);
+    clearStatus();
+
+    const path =
+      `${currentUser.id}/${crypto.randomUUID()}`;
+
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from("photos")
+        .upload(path, file, {
+          contentType: file.type,
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { error: insertError } = await supabase
+        .from("photos")
+        .insert({
+          title,
+          description,
+          storage_path: path
+        });
+
+      if (insertError) {
+        await supabase.storage.from("photos").remove([path]);
+        throw insertError;
+      }
+
+      $("uploadForm").reset();
+
+      status("Photo publiée avec succès ! 💜", true);
+
+      await loadGallery();
+
+    } catch (error) {
+      console.error(error);
+      status(error.message || "La publication a échoué.", true);
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  if (!CONFIGURED) {
+    showLoggedOut();
+
+    status(
+      "Le design est prêt. Pour activer les comptes, les photos et les J'aime, configure les identifiants Supabase dans le code."
+    );
+
+  } else if (window.supabase?.createClient) {
+    supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        showLoggedOut();
+      } else if (event === "SIGNED_IN" && session) {
+        setTimeout(() => showLoggedIn(session.user), 0);
+      }
+    });
+
+    refreshSession();
+
+  } else {
+    showLoggedOut();
+    status("Impossible de charger le service d'authentification.");
+  }
+
+  setMode(false);
+
+})();
+</script>
+
+</body>
+  </html>
